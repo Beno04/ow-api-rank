@@ -3,6 +3,12 @@ import fetch from "node-fetch";
 
 const app = express();
 
+// Route racine pour tester si le serveur fonctionne
+app.get("/", (req, res) => {
+  res.send("API Overwatch Rank est en ligne ✅ Utilise /ow_rank?battletag=TON_BATTLETAG");
+});
+
+// Endpoint principal pour les rangs Overwatch
 app.get("/ow_rank", async (req, res) => {
   const tag = req.query.battletag;
   if (!tag) return res.send("BattleTag manquant ❌");
@@ -19,7 +25,6 @@ app.get("/ow_rank", async (req, res) => {
     const support = comp.support?.division || "Inconnu";
     const any = comp.any?.division || "Inconnu"; // sélection libre
 
-    // Renvoie tous les rangs
     res.send(`Tank: ${tank} | DPS: ${dps} | Support: ${support} | Sélection libre: ${any}`);
   } catch (e) {
     res.send("Impossible de lire les données 😢");
