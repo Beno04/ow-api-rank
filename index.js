@@ -3,12 +3,10 @@ import fetch from "node-fetch";
 
 const app = express();
 
-// Route racine pour tester si le serveur fonctionne
 app.get("/", (req, res) => {
   res.send("API Overwatch Rank est en ligne ✅ Utilise /ow_rank?battletag=TON_BATTLETAG");
 });
 
-// Endpoint principal pour les rangs Overwatch
 app.get("/ow_rank", async (req, res) => {
   const tag = req.query.battletag;
   if (!tag) return res.send("BattleTag manquant ❌");
@@ -20,13 +18,14 @@ app.get("/ow_rank", async (req, res) => {
     const comp = data.competitive?.pc;
     if (!comp) return res.send("Aucune donnée compétitive trouvée 😢");
 
-    const tank = comp.tank?.division || "Inconnu";
-    const dps = comp.damage?.division || "Inconnu";
-    const support = comp.support?.division || "Inconnu";
-    const any = comp.any?.division || "Inconnu"; // sélection libre
+    const tank = comp.tank ? `${comp.tank.division} ${comp.tank.tier}` : "Inconnu";
+    const dps = comp.damage ? `${comp.damage.division} ${comp.damage.tier}` : "Inconnu";
+    const support = comp.support ? `${comp.support.division} ${comp.support.tier}` : "Inconnu";
+    const open = comp.open ? `${comp.open.division} ${comp.open.tier}` : "Inconnu"; // sélection libre
 
-    res.send(`Tank: ${tank} | DPS: ${dps} | Support: ${support} | Sélection libre: ${any}`);
+    res.send(`Tank: ${tank} | DPS: ${dps} | Support: ${support} | Sélection libre: ${open}`);
   } catch (e) {
+    console.error(e);
     res.send("Impossible de lire les données 😢");
   }
 });
